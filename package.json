@@ -1,0 +1,26 @@
+{
+  "name": "ecommerce-store",
+  "version": "1.0.0",
+  "description": "ecommerce store where customers can create user accounts, add items to cart, and place orders",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andersonhall/ecommerce-store.git"
+  },
+  "author": "Andy Hall",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andersonhall/ecommerce-store/issues"
+  },
+  "homepage": "https://github.com/andersonhall/ecommerce-store#readme",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "pg": "^8.14.1"
+  }
+}
