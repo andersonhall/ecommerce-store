@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
   } else {
     categories = new Array(categories.split(","));
     products = await db.query(
-      "SELECT * FROM product WHERE category_id = ANY ($1)",
+      "SELECT * FROM product p JOIN products_categories pc ON p.id = pc.product_id WHERE pc.category_id = ANY ($1)",
       [categories]
     );
   }
@@ -37,7 +37,6 @@ router.post("/", async (req, res) => {
     [product_name, product_desc, inventoryId.rows[0].id, sku, price]
   );
   if (categories.length > 0) {
-    // check for existing
     for (const category of categories) {
       let cat = await db.query("SELECT * FROM product_category WHERE id = $1", [
         category,
