@@ -7,9 +7,31 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
+const session = require("express-session");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: "MYSESSIONSECRET",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: true },
+  })
+);
+app.use(passport.session());
+passport.serializeUser(async (user, done) => {
+  done(null, user.rows[0].username);
+});
+passport.deserializeUser(async (username, done) => {
+  await db.query(
+    "SELECT * FROM users WHERE username = $1",
+    [username],
+    (err, user) => {
+      done(err, user.rows[0]);
+    }
+  );
+});
 passport.use(
   new LocalStrategy(
     {
@@ -26,8 +48,12 @@ passport.use(
             message: "Incorrect username or password.",
           });
         }
-        const correctPassword = await bcrypt.compare(hashedPassword, password);
+        const correctPassword = await bcrypt.compare(
+          password,
+          user.rows[0].password
+        );
         if (!correctPassword) {
+          console.log("not correct");
           return done(null, false, {
             message: "Incorrect username or password.",
           });
@@ -40,8 +66,25 @@ passport.use(
   )
 );
 
-app.use(passport.initialize());
-// app.use(passport.session());
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureMessage: true,
+  }),
+  (req, res) => {
+    res.json({ user: req.user.rows[0].username });
+  }
+);
+
+app.post("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.status(200).json({ message: "Logged out." });
+  });
+});
 
 app.post("/register", async (req, res) => {
   try {
