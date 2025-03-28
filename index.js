@@ -8,6 +8,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const productsRouter = require("./routes/products");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -66,6 +67,8 @@ passport.use(
   )
 );
 
+app.use("/products", productsRouter);
+
 app.post(
   "/login",
   passport.authenticate("local", {
@@ -73,7 +76,7 @@ app.post(
     failureMessage: true,
   }),
   (req, res) => {
-    res.json({ user: req.user.rows[0].username });
+    res.json({ user: req.user.rows[0].username, session: req.session });
   }
 );
 
@@ -82,7 +85,7 @@ app.post("/logout", (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.status(200).json({ message: "Logged out." });
+    res.status(200).json({ message: "Logged out.", session: req.session });
   });
 });
 
