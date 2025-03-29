@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const productsRouter = require("./routes/products");
 const usersRouter = require("./routes/users");
+const cartRouter = require("./routes/cart");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -70,6 +71,7 @@ passport.use(
 
 app.use("/products", productsRouter);
 app.use("/users", usersRouter);
+app.use("/cart", cartRouter);
 
 app.post(
   "/login",
@@ -78,7 +80,7 @@ app.post(
     failureMessage: true,
   }),
   (req, res) => {
-    res.json({ user: req.user.rows[0].username, session: req.session });
+    res.json({ user: req.user.rows[0], session: req.session });
   }
 );
 
