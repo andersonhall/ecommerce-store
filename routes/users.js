@@ -8,4 +8,12 @@ router.get("/", async (req, res) => {
   res.json(users.rows);
 });
 
+router.get("/:id", async (req, res) => {
+  const user = await db.query(
+    "SELECT id, username, first_name, last_name, created_at, modified_at FROM users WHERE id = $1",
+    [req.params.id]
+  );
+  res.json(user.rows[0]);
+});
+
 module.exports = router;
