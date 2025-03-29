@@ -9,6 +9,7 @@ const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const productsRouter = require("./routes/products");
+const usersRouter = require("./routes/users");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -68,6 +69,7 @@ passport.use(
 );
 
 app.use("/products", productsRouter);
+app.use("/users", usersRouter);
 
 app.post(
   "/login",
