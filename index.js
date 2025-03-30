@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const port = process.env.SERVER_PORT;
 const db = require("./db/index");
 const passport = require("passport");
@@ -13,6 +14,7 @@ const usersRouter = require("./routes/users");
 const cartRouter = require("./routes/cart");
 const ordersRouter = require("./routes/orders");
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -113,14 +115,8 @@ app.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = await db.query(
-      "INSERT INTO users (username, password, first_name, last_name, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [
-        username,
-        hashedPassword,
-        first_name,
-        last_name,
-        new Date().toISOString(),
-      ]
+      "INSERT INTO users (username, password, first_name, last_name, created_at) VALUES ($1, $2, $3, $4, now()) RETURNING *",
+      [username, hashedPassword, first_name, last_name]
     );
     return res.status(201).json({ message: "User registered." });
   } catch (err) {
