@@ -1,0 +1,318 @@
+swagger: '2.0'
+info:
+  contact: {}
+  title: Ecommerce API
+  version: 1.0.0
+host: localhost
+basePath: /
+schemes:
+  - http
+paths:
+  /cart:
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              user_id:
+                example: 11
+                type: number
+            type: object
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Carts
+      description: Create Cart
+      operationId: createCart
+      summary: Create Cart
+  /cart/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+    get:
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Carts
+      description: Get Cart By Id
+      operationId: getCartById
+      summary: Get Cart By Id
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              product_id:
+                example: 25
+                type: number
+              user_id:
+                example: 11
+                type: number
+            type: object
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Carts
+      description: Add to Cart
+      operationId: addToCart
+      summary: Add to Cart
+    put:
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              product_id:
+                example: 13
+                type: number
+            type: object
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Carts
+      description: Remove Item from Cart
+      operationId: removeItemFromCart
+      summary: Remove Item from Cart
+  /cart/{id}/checkout:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+    post:
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Orders
+      description: Checkout (Create Order)
+      operationId: checkoutCreateOrder
+      summary: Checkout (Create Order)
+  /login:
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              password:
+                example: secret-password123
+                type: string
+              username:
+                example: asdf
+                type: string
+            type: object
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Auth
+      description: Login
+      operationId: login
+      summary: Login
+  /logout:
+    post:
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Auth
+      description: Logout
+      operationId: logout
+      summary: Logout
+  /orders:
+    get:
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              user_id:
+                example: 11
+                type: number
+            type: object
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Orders
+      description: Get Orders by User Id
+      operationId: getOrdersByUserId
+      summary: Get Orders by User Id
+  /products:
+    get:
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Products
+      description: Get Products
+      operationId: getProducts
+      summary: Get Products
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              categories:
+                example:
+                  - 2
+                  - 6
+                items:
+                  example: 2
+                  type: number
+                type: array
+              price:
+                example: 5.99
+                type: number
+              product_desc:
+                example: test desc
+                type: string
+              product_name:
+                example: pnametest
+                type: string
+              sku:
+                example: fffddfebvfffd
+                type: string
+            type: object
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Products
+      description: Create Product
+      operationId: createProduct
+      summary: Create Product
+  /products/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+    get:
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Products
+      description: Get Product By ID
+      operationId: getProductById
+      summary: Get Product By ID
+    put:
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              price:
+                example: 6.97
+                type: number
+              product_desc:
+                example: test desscc
+                type: string
+              product_name:
+                example: test
+                type: string
+              sku:
+                example: asdf
+                type: string
+            type: object
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Products
+      description: Update Product
+      operationId: updateProduct
+      summary: Update Product
+  /register:
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              first_name:
+                example: Andy
+                type: string
+              last_name:
+                example: Hall
+                type: string
+              password:
+                example: secret-password123
+                type: string
+              username:
+                example: fds
+                type: string
+            type: object
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Auth
+      description: Register
+      operationId: register
+      summary: Register
+  /users:
+    get:
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Users
+      description: Get Users
+      operationId: getUsers
+      summary: Get Users
+  /users/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+    get:
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - Users
+      description: Get User By ID
+      operationId: getUserById
+      summary: Get User By ID
+tags:
+  - name: Products
+  - name: Users
+  - name: Carts
+  - name: Orders
+  - name: Auth

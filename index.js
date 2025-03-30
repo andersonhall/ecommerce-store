@@ -11,6 +11,7 @@ const session = require("express-session");
 const productsRouter = require("./routes/products");
 const usersRouter = require("./routes/users");
 const cartRouter = require("./routes/cart");
+const ordersRouter = require("./routes/orders");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -72,6 +73,7 @@ passport.use(
 app.use("/products", productsRouter);
 app.use("/users", usersRouter);
 app.use("/cart", cartRouter);
+app.use("/orders", ordersRouter);
 
 app.post(
   "/login",
