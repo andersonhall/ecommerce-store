@@ -13,7 +13,6 @@ const productsRouter = require("./routes/products");
 const usersRouter = require("./routes/users");
 const cartRouter = require("./routes/cart");
 const ordersRouter = require("./routes/orders");
-const storeRouter = require("./routes/store");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -44,31 +43,27 @@ passport.use(
     {
       usernameField: "username",
       passwordField: "password",
+      failureMessage: true,
     },
-    async (username, password, done) => {
-      try {
-        const user = await db.query("SELECT * FROM users WHERE username = $1", [
-          username,
-        ]);
-        if (user.rows.length === 0) {
-          return done(null, false, {
-            message: "Incorrect username or password.",
-          });
-        }
-        const correctPassword = await bcrypt.compare(
-          password,
-          user.rows[0].password
-        );
-        if (!correctPassword) {
-          console.log("not correct");
-          return done(null, false, {
-            message: "Incorrect username or password.",
-          });
-        }
-        return done(null, user);
-      } catch (err) {
-        return done(err);
+    async function (username, password, done) {
+      const user = await db.query("SELECT * FROM users WHERE username = $1", [
+        username,
+      ]);
+      if (user.rows.length === 0) {
+        return done(null, false, {
+          message: "Incorrect username or password.",
+        });
       }
+      const correctPassword = await bcrypt.compare(
+        password,
+        user.rows[0].password
+      );
+      if (!correctPassword) {
+        return done(null, false, {
+          message: "Incorrect username or password.",
+        });
+      }
+      return done(null, user);
     }
   )
 );
@@ -77,18 +72,19 @@ app.use("/products", productsRouter);
 app.use("/users", usersRouter);
 app.use("/cart", cartRouter);
 app.use("/orders", ordersRouter);
-app.use("/store", storeRouter);
 
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    failureRedirect: "/login",
-    failureMessage: true,
-  }),
-  (req, res) => {
-    res.redirect("/store");
-  }
-);
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return next(err); // Handle unexpected errors
+    }
+    if (!user) {
+      // Send the error message from the `info` object to the client
+      return res.status(401).json({ message: info.message });
+    }
+    return res.status(200).json({ message: "Login successful" });
+  })(req, res, next);
+});
 
 app.post("/logout", (req, res, next) => {
   req.logout((err) => {

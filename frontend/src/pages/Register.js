@@ -1,6 +1,7 @@
 import "./Register.css";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import Navbar from "../components/Navbar";
 
 const Register = () => {
   const [userName, setUsername] = useState("");
@@ -57,6 +58,7 @@ const Register = () => {
 
   return (
     <>
+      <Navbar />
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="username">Username:</label>
