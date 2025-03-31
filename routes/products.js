@@ -24,7 +24,8 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { product_name, product_desc, sku, price, categories } = req.body;
+  const { product_name, product_desc, sku, price, product_image, categories } =
+    req.body;
   const product = await db.query("SELECT * FROM product WHERE sku = $1", [sku]);
   if (product.rows.length > 0) {
     return res.json({ msg: "Product already exists." });
@@ -33,8 +34,15 @@ router.post("/", async (req, res) => {
     "INSERT INTO product_inventory DEFAULT VALUES RETURNING id"
   );
   const newProductId = await db.query(
-    "INSERT INTO product (product_name, product_desc, inventory_id, sku, price) VALUES ($1, $2, $3, $4, $5) RETURNING id",
-    [product_name, product_desc, inventoryId.rows[0].id, sku, price]
+    "INSERT INTO product (product_name, product_desc, product_image, inventory_id, sku, price) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+    [
+      product_name,
+      product_desc,
+      product_image,
+      inventoryId.rows[0].id,
+      sku,
+      price,
+    ]
   );
   if (categories.length > 0) {
     for (const category of categories) {
@@ -53,32 +61,40 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-  const { product_name, product_desc, sku, price, categories } = req.body;
+  const { product_name, product_desc, product_image, sku, price, categories } =
+    req.body;
   if (product_name !== undefined) {
     const newName = product_name;
     await db.query(
-      "UPDATE product SET product_name = $1, modified_at = now() WHERE id = $2 AND product_name <> $1",
+      "UPDATE product SET product_name = $1, modified_at = now() WHERE id = $2 AND (product_name <> $1 OR product_name IS NULL)",
       [newName, req.params.id]
     );
   }
   if (product_desc !== undefined) {
     const newDesc = product_desc;
     await db.query(
-      "UPDATE product SET product_desc = $1, modified_at = now() WHERE id = $2 AND product_desc <> $1",
+      "UPDATE product SET product_desc = $1, modified_at = now() WHERE id = $2 AND (product_desc <> $1 OR product_desc IS NULL)",
       [newDesc, req.params.id]
+    );
+  }
+  if (product_image !== undefined) {
+    const newImg = product_image;
+    await db.query(
+      "UPDATE product SET product_image = $1, modified_at = now() WHERE id = $2 AND (product_image <> $1 OR product_image IS NULL)",
+      [newImg, req.params.id]
     );
   }
   if (sku !== undefined) {
     const newSku = sku;
     await db.query(
-      "UPDATE product SET sku = $1, modified_at = now() WHERE id = $2 AND sku <> $1",
+      "UPDATE product SET sku = $1, modified_at = now() WHERE id = $2 AND (sku <> $1 OR sku IS NULL)",
       [newSku, req.params.id]
     );
   }
   if (price !== undefined) {
     const newPrice = price;
     await db.query(
-      "UPDATE product SET price = $1, modified_at = now() WHERE id = $2 AND price <> $1",
+      "UPDATE product SET price = $1, modified_at = now() WHERE id = $2 AND (price <> $1 OR price IS NULL)",
       [newPrice, req.params.id]
     );
   }
