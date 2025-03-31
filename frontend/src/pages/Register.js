@@ -1,5 +1,6 @@
 import "./Register.css";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 const Register = () => {
   const [userName, setUsername] = useState("");
@@ -7,6 +8,7 @@ const Register = () => {
   const [password2, setPassword2] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,17 +22,33 @@ const Register = () => {
       first_name: firstName,
       last_name: lastName,
     };
-    const url = "http://localhost:3000/register";
     try {
-      await fetch(url, {
+      const registerUrl = "http://localhost:3000/register";
+      await fetch(registerUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
       })
         .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-        });
+        .then((data) => console.log(data));
+    } catch (err) {
+      return err;
+    }
+    try {
+      const loginUrl = "http://localhost:3000/login";
+      await fetch(loginUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: userName,
+          password: password1,
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          throw Error("Error logging in.");
+        }
+        navigate("/store");
+      });
     } catch (err) {
       console.log(err);
       return null;

@@ -13,6 +13,7 @@ const productsRouter = require("./routes/products");
 const usersRouter = require("./routes/users");
 const cartRouter = require("./routes/cart");
 const ordersRouter = require("./routes/orders");
+const storeRouter = require("./routes/store");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -76,6 +77,7 @@ app.use("/products", productsRouter);
 app.use("/users", usersRouter);
 app.use("/cart", cartRouter);
 app.use("/orders", ordersRouter);
+app.use("/store", storeRouter);
 
 app.post(
   "/login",
@@ -84,7 +86,7 @@ app.post(
     failureMessage: true,
   }),
   (req, res) => {
-    res.json({ user: req.user.rows[0], session: req.session });
+    res.redirect("/store");
   }
 );
 
@@ -101,16 +103,14 @@ app.post("/register", async (req, res) => {
   try {
     const { username, password, first_name, last_name } = req.body;
     if (!username || !password || !first_name || !last_name) {
-      return res.status(400).json({ message: "Please fill out all fields." });
+      throw Error("Please fill out all fields");
     }
     const existingUser = await db.query(
       "SELECT * FROM users WHERE username = $1",
       [username]
     );
     if (existingUser.rows.length > 0) {
-      return res.status(400).json({
-        message: "Username already exists.",
-      });
+      throw Error("Username already exists");
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -125,7 +125,7 @@ app.post("/register", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello world");
+  res.send({ message: "hello" });
 });
 
 app.listen(port, () => {
