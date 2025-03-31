@@ -14,7 +14,13 @@ const usersRouter = require("./routes/users");
 const cartRouter = require("./routes/cart");
 const ordersRouter = require("./routes/orders");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    credentials: true,
+    methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
+  })
+);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -22,7 +28,7 @@ app.use(
     secret: "MYSESSIONSECRET",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: true },
+    cookie: { secure: false, httpOnly: true },
   })
 );
 app.use(passport.session());
@@ -68,7 +74,15 @@ passport.use(
   )
 );
 
-app.use("/products", productsRouter);
+const isAuthenticated = (req, res, next) => {
+  console.log(req.session);
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+};
+
+app.use("/products", isAuthenticated, productsRouter);
 app.use("/users", usersRouter);
 app.use("/cart", cartRouter);
 app.use("/orders", ordersRouter);
@@ -82,7 +96,8 @@ app.post("/login", (req, res, next) => {
       // Send the error message from the `info` object to the client
       return res.status(401).json({ message: info.message });
     }
-    return res.status(200).json({ message: "Login successful" });
+    req.session.user = { id: user.rows[0].id, username: user.rows[0].username };
+    return res.status(200).send(JSON.stringify(req.session.id));
   })(req, res, next);
 });
 
@@ -91,6 +106,7 @@ app.post("/logout", (req, res, next) => {
     if (err) {
       return next(err);
     }
+    req.session.destroy();
     res.status(200).json({ message: "Logged out.", session: req.session });
   });
 });

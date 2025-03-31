@@ -13,6 +13,7 @@ const Login = () => {
       const loginUrl = "http://localhost:3000/login";
       const response = await fetch(loginUrl, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: userName,
