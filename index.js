@@ -75,17 +75,20 @@ passport.use(
 );
 
 const isAuthenticated = (req, res, next) => {
-  console.log(req.session);
   if (!req.session.user) {
-    return res.redirect("/");
+    return res.send("unauthorized");
   }
   next();
 };
 
 app.use("/products", isAuthenticated, productsRouter);
-app.use("/users", usersRouter);
-app.use("/cart", cartRouter);
-app.use("/orders", ordersRouter);
+app.use("/users", isAuthenticated, usersRouter);
+app.use("/cart", isAuthenticated, cartRouter);
+app.use("/orders", isAuthenticated, ordersRouter);
+
+app.get("/unauthorized", (req, res) => {
+  res.sendStatus(401);
+});
 
 app.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
@@ -107,7 +110,7 @@ app.post("/logout", (req, res, next) => {
       return next(err);
     }
     req.session.destroy();
-    res.status(200).json({ message: "Logged out.", session: req.session });
+    res.status(200).json({ message: "Logged out." });
   });
 });
 
