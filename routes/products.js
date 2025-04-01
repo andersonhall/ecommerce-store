@@ -5,7 +5,9 @@ router.get("/", async (req, res) => {
   let categories = req.query.category;
   let products;
   if (categories === undefined) {
-    products = await db.query("SELECT * FROM product");
+    products = await db.query(
+      "SELECT p.*, pi.quantity FROM product p JOIN product_inventory pi on p.inventory_id = pi.id"
+    );
   } else {
     categories = new Array(categories.split(","));
     products = await db.query(
