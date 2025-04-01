@@ -81,7 +81,7 @@ const isAuthenticated = (req, res, next) => {
   next();
 };
 
-app.use("/products", isAuthenticated, productsRouter);
+app.use("/products", productsRouter);
 app.use("/users", isAuthenticated, usersRouter);
 app.use("/cart", isAuthenticated, cartRouter);
 app.use("/orders", isAuthenticated, ordersRouter);

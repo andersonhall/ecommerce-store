@@ -1,20 +1,29 @@
+import { logout } from "../utils/logout";
+import ProductList from "../components/ProductList";
+import { useState, useEffect } from "react";
+
 const Store = () => {
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    await fetch("http://localhost:3000/logout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  };
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await fetch("http://localhost:3000/products");
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
+      setProducts(data);
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <>
       <h1>Store</h1>
-      <a href="/" onClick={handleLogout} alt="logout">
+      <a href="/" onClick={logout} alt="logout">
         Logout
       </a>
+
+      <ProductList products={products} />
     </>
   );
 };

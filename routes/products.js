@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
   } else {
     categories = new Array(categories.split(","));
     products = await db.query(
-      "SELECT * FROM product p JOIN products_categories pc ON p.id = pc.product_id WHERE pc.category_id = ANY ($1)",
+      "SELECT p.*, pc.category_id, pi.quantity FROM product p JOIN products_categories pc ON p.id = pc.product_id JOIN product_inventory pi ON p.inventory_id = pi.id WHERE pc.category_id = ANY ($1)",
       [categories]
     );
   }
@@ -17,9 +17,10 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const product = await db.query("SELECT * FROM product WHERE id = $1", [
-    req.params.id,
-  ]);
+  const product = await db.query(
+    "SELECT p.*, pi.quantity FROM product p JOIN product_inventory pi ON p.inventory_id = pi.id WHERE p.id = $1",
+    [req.params.id]
+  );
   res.json(product.rows);
 });
 
