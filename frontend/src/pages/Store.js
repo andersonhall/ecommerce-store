@@ -8,9 +8,7 @@ const Store = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await fetch("http://localhost:3000/products");
-      console.log(response);
       const data = await response.json();
-      console.log(data);
       setProducts(data);
     };
     fetchProducts();

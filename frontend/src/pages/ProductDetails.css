@@ -1,0 +1,15 @@
+.product-details {
+  width: 250px;
+  margin: 0 auto 30px;
+}
+
+.product-name,
+.product-desc,
+.product-price {
+  margin: 0 5px 3px;
+}
+
+.product-image {
+  width: 250px;
+  height: 250px;
+}
