@@ -17,6 +17,7 @@ const ProductList = (props) => {
               image={product_image || "https://placehold.co/250x250"}
               price={price}
               key={id}
+              id={id}
             />
           );
         })}
