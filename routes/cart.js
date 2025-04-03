@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const db = require("../db/index");
 
-// Get cart by ID
-router.get("/:id", async (req, res) => {
-  const cart = await db.query("SELECT * FROM cart WHERE id = $1", [
+// Get cart by user ID
+router.get("/:user_id", async (req, res) => {
+  const cart = await db.query("SELECT * FROM cart WHERE user_id = $1", [
     req.params.id,
   ]);
   res.json({ cart: cart.rows[0] });

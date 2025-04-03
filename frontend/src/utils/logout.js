@@ -5,5 +5,7 @@ export const logout = async (e) => {
     headers: { "Content-Type": "application/json" },
   })
     .then((res) => res.json())
-    .then((data) => console.log(data));
+    .then((data) => {
+      console.log(data);
+    });
 };

@@ -1,6 +1,7 @@
 import { logout } from "../utils/logout";
 import ProductList from "../components/ProductList";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
 const Store = () => {
   const [products, setProducts] = useState([]);
@@ -14,10 +15,17 @@ const Store = () => {
     fetchProducts();
   }, []);
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     <>
       <h1>Store</h1>
-      <a href="/" onClick={logout} alt="logout">
+      <a href="/" onClick={handleLogout} alt="logout">
         Logout
       </a>
 
